@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: database
+      POSTGRES_DB: database
+      POSTGRES_PASSWORD: database
+    volumes:
+      - data:/var/lib/postgresql/data
+      - ./models:/models
+    ports:
+      - 5432:5432
+    networks:
+      - appnetwork
+      - datanetwork
+  initialize_db:
+    build: ./initialize_db
+    networks:
+      - datanetwork
+    depends_on:
+      - db
+
+networks:
+  appnetwork: 
+    driver: bridge
+  datanetwork:
+    driver: bridge
+
+volumes:
+  data:
