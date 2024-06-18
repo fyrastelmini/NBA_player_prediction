@@ -2,7 +2,7 @@
 FROM python:3.8-slim-buster
 
 # Définissez un répertoire de travail
-WORKDIR /app
+WORKDIR /initialize_db
 
 # Copiez les fichiers de dépendances et installez les dépendances
 COPY requirements.txt .

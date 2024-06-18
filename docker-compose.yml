@@ -7,7 +7,6 @@ services:
       POSTGRES_PASSWORD: database
     volumes:
       - data:/var/lib/postgresql/data
-      - ./models:/models
     ports:
       - 5432:5432
     networks:
@@ -19,7 +18,31 @@ services:
       - datanetwork
     depends_on:
       - db
-
+      - kafka
+  make_images:
+    build: ./make_images
+    networks:
+      - datanetwork
+    depends_on:
+      - initialize_db
+  zookeeper:
+      image: confluentinc/cp-zookeeper:latest
+      environment:
+        ZOOKEEPER_CLIENT_PORT: 2181
+      networks:
+        - appnetwork
+        - datanetwork
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - appnetwork
+      - datanetwork
 networks:
   appnetwork: 
     driver: bridge
